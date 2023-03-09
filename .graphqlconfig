@@ -1,0 +1,15 @@
+{
+  "name": "Relay GraphQL Schema",
+  "extensions": {
+    "endpoints": {
+      "collection": {
+        "schemaPath": "schema.graphql",
+        "url": "https://api.abfree.com/v1/graphql",
+        "introspect": false,
+        "headers": {
+//          "x-hasura-admin-secret": "${env:AUTH_TOKEN_ENV}"
+        }
+      }
+    }
+  }
+}
