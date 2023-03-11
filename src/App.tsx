@@ -1,23 +1,29 @@
-import { Box } from '@chakra-ui/react'
+import { gql } from '@apollo/client'
+import { Box, Button, Textarea } from '@chakra-ui/react'
+import { buildASTSchema, parse, print, visit } from 'graphql'
+import { OperationTypeNode } from 'graphql/language/ast'
 import { buildClientSchema } from 'graphql/utilities'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 
-import { IntrospectionQuery } from './apollo'
 import { client } from './apollo/client'
+import { getAllQuery } from './biz/help'
 
 function App() {
+  const [query, setQuery] = useState('')
   useEffect(() => {
-    test()
-  }, [])
-
-  return <Box className="App">hahah</Box>
-}
-
-const test = async () => {
-  const result = await client.query({ query: IntrospectionQuery })
-  console.log('data', result.data)
-  const schema = buildClientSchema(result.data)
-  console.log('schema', schema.getQueryType()?.getFields())
+    getAllQuery()
+  })
+  const onQuery = async () => {
+    return client.query({
+      query: gql(query),
+    })
+  }
+  return (
+    <Box className="App">
+      <Textarea onChange={(e) => setQuery(e.target.value)} />
+      <Button onClick={onQuery}>Query</Button>
+    </Box>
+  )
 }
 
 export default App
