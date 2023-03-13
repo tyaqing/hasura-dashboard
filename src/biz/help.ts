@@ -33,7 +33,23 @@ export const getAllQuery = async () => {
 }
 
 export function handleResData(data: any) {
-  return Object.keys(data).map((key) => {
+  /**
+   * 根结构如下
+   * {data1:{},data2:{}}
+   * data结构如下
+   * {
+   *   data:[] 具体数据
+   *   field:[] 字段key
+   *   description:[]
+   * }
+   */
+  const res: any = {}
+  const allKey = Object.keys(data).map((key) => {
+    res[key] = {
+      data: data[key],
+    }
+    res[key].field = Object.keys(data[key]?.[0]) || []
     return key
   })
+  return { allKey, res }
 }

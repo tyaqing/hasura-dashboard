@@ -3,29 +3,24 @@ import {
   Box,
   Button,
   Table,
-  TableCaption,
   TableContainer,
   Tbody,
   Td,
   Textarea,
-  Tfoot,
   Th,
   Thead,
   Tr,
 } from '@chakra-ui/react'
-import { buildASTSchema, parse, print, visit } from 'graphql'
-import { OperationTypeNode } from 'graphql/language/ast'
-import { buildClientSchema } from 'graphql/utilities'
 import { useEffect, useState } from 'react'
 
 import { client } from './apollo/client'
-import { getAllQuery, handleResData } from './biz/help'
+import { handleResData } from './biz/help'
 
 function App() {
   const [query, setQuery] = useState(`query MyQuery {
   npmvs_lucky_packages(args: {num: 10}) {
-    name
     id
+    name
     weight
   }
 }
@@ -33,14 +28,17 @@ function App() {
   const [unknownTypeData, setUnknownTypeData] = useState()
   const [allKey, setAllKey] = useState<string[]>([])
   useEffect(() => {
-    getAllQuery()
+    // getAllQuery()
   })
   const onQuery = async () => {
     const { data } = await client.query({
       query: gql(query),
     })
-    setAllKey(handleResData(data))
-    setUnknownTypeData(data)
+
+    const { allKey, res } = handleResData(data)
+    setAllKey(allKey)
+    console.log('data', res)
+    setUnknownTypeData(res)
   }
   return (
     <Box className="App">
@@ -51,19 +49,21 @@ function App() {
         <Table size="sm">
           <Thead>
             <Tr>
-              <Th>To convert</Th>
-              <Th>into</Th>
-              <Th isNumeric>multiply by</Th>
+              {unknownTypeData?.['npmvs_lucky_packages'] &&
+                unknownTypeData?.['npmvs_lucky_packages'].field.map((v) => {
+                  return <Th key={v}>{v}</Th>
+                })}
             </Tr>
           </Thead>
           <Tbody>
             {unknownTypeData?.['npmvs_lucky_packages'] &&
-              Object.values(unknownTypeData?.['npmvs_lucky_packages']).map((key, index) => {
+              unknownTypeData?.['npmvs_lucky_packages'].data.map((item) => {
+                console.log('item', item)
                 return (
-                  <Tr key={index}>
-                    <Td>{key}</Td>
-                    <Td>millimetres (mm)</Td>
-                    <Td isNumeric>25.4</Td>
+                  <Tr key={item.id}>
+                    {Object.values(item).map((v) => {
+                      return <Td key={v}>{v}</Td>
+                    })}
                   </Tr>
                 )
               })}
