@@ -31,3 +31,9 @@ export const getAllQuery = async () => {
   )
   console.log('description', description)
 }
+
+export function handleResData(data: any) {
+  return Object.keys(data).map((key) => {
+    return key
+  })
+}
